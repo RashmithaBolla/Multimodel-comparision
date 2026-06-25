@@ -2,15 +2,16 @@
 
 import time
 import os
+from pathlib import Path
 from openai import OpenAI
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(Path(__file__).parent / ".env")
 
 MODELS = [
     "openai/gpt-4o-mini",
     "anthropic/claude-haiku-4-5",
-    "google/gemini-2.0-flash-001",
+    "google/gemini-2.0-flash",
     "meta-llama/llama-3.3-70b-instruct",
 ]
 
@@ -18,7 +19,7 @@ MODELS = [
 PRICES = {
     "openai/gpt-4o-mini":                  (0.15,  0.60),
     "anthropic/claude-haiku-4-5":          (0.80,  4.00),
-    "google/gemini-2.0-flash-001":         (0.10,  0.40),
+    "google/gemini-2.0-flash":             (0.10,  0.40),
     "meta-llama/llama-3.3-70b-instruct":   (0.065, 0.065),
 }
 
@@ -54,6 +55,7 @@ def ask(question: str, model: str) -> dict:
         response = client.chat.completions.create(
             model=model,
             messages=[{"role": "user", "content": question}],
+            max_tokens=1024,
             timeout=30,
         )
         result["latency"] = round(time.perf_counter() - start, 2)
